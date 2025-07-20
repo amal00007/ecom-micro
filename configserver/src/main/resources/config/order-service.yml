@@ -1,0 +1,80 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/order
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+rabbitmq:
+  host: localhost
+  port: 5672
+  username: guest
+  password: guest
+  exchange:
+    name: order.exchange
+  queue:
+    name:  order.queue
+  routing:
+    key: order.tracking
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+     enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8080/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+server:
+  port: 8083
+logging:
+  level:
+    root: INFO
+    com.ecommerce.user: TRACE
+  file:
+    name: logs/order.log
+  logback:
+    rollingpolicy:
+      max-file-size: 5MB
+      max-history: 7
+#circuit Breaker
+resilience4j:
+  circuitbreaker:
+    instances:
+      productService:
+        registerHealthIndicator: true
+        slidingWindowSize: 3
+        minimumNumberOfCalls: 3
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        slidingWindowType: count_based
+  retry:
+    instances:
+      retryService:
+        maxAttempts: 5
+        waitDuration: 500ms
+  ratelimiter:
+    instances:
+      rateBreaker:
+        timeout-duration: 0
+        limit-refresh-period: 4s
+        limit-for-period: 5

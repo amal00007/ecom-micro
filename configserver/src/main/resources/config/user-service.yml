@@ -1,0 +1,39 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/userdb
+      database: userdb
+
+rabbitmq:
+  host: localhost
+  port: 5672
+  username: guest
+  password: guest
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
+eureka:
+  client:
+    serviceUrl:
+     defaultZone: http://localhost:8080/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+server:
+  port: 8082
+logging:
+  level:
+    root: INFO
+    com.ecommerce.user: TRACE
+  file:
+    name: logs/user.log
+  logback:
+    rollingpolicy:
+      max-file-size: 5MB
+      max-history: 7
